@@ -1,0 +1,40 @@
+{
+  "name": "minotaur",
+  "version": "1.0.0",
+  "description": "Minotaur maze generator/solver",
+  "main": "index.js",
+  "scripts": {
+    "test": "semistandard && mocha"
+  },
+  "keywords": [
+    "maze",
+    "tree",
+    "algorithm"
+  ],
+  "author": "Matt Ciocchi",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "archetype-js": "^0.6.1",
+    "chai": "^4.0.2",
+    "debug": "^2.6.8",
+    "mocha": "^3.4.2"
+  },
+  "semistandard": {
+    "global": [
+      "it",
+      "describe"
+    ]
+  },
+  "directories": {
+    "test": "test"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mciocchi/minotaur.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mciocchi/minotaur/issues"
+  },
+  "homepage": "https://github.com/mciocchi/minotaur#readme"
+}
