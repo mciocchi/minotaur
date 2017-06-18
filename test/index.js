@@ -21,6 +21,8 @@ const assert = require('chai').assert;
 const expect = require('chai').expect;
 const Plane = require('../lib/plane');
 const Cursor = require('../lib/cursor');
+const Map = require('../lib/map');
+const Point = require('../lib/point');
 
 describe('Plane', function () {
   let plane = null;
@@ -103,6 +105,48 @@ describe('Cursor', function () {
   it('should initialize correctly', function (done) {
     cursor = new Cursor([0, 0], plane);
     assert(cursor, 'cursor should be initialized');
+    done();
+  });
+});
+
+describe('Map', function () {
+  let map = null;
+
+  it('should initialize correctly', function (done) {
+    map = new Map([10, 10]);
+    assert(map, 'map should be initialized.');
+    done();
+  });
+
+  it('should be able to set points by coordinate', function (done) {
+    map.set([0, 1], new Point({type: 'START'}));
+    done();
+  });
+
+  let point = null;
+  it('should be able to set points by path', function (done) {
+    point = new Point({type: 'TUNNEL'});
+    map.set(['NORTH', 'NORTH'], point);
+    map.set(['NORTH', 'NORTH', 'EAST'], new Point({type: 'END'}));
+    done();
+  });
+
+  it('should be queriable by coordinate', function (done) {
+    let retval = map.get([0, 2]);
+    assert(retval === point, 'map.get should return the correct point.');
+    done();
+  });
+
+  it('should be queriable by coordinate', function (done) {
+    let retval = map.get([0, 2]);
+    assert(retval instanceof Point, 'map.get should return points that were set.');
+    assert(retval.type = 'TUNNEL', 'map.get should return the correct point.');
+    done();
+  });
+
+  it('should be queriable by path', function (done) {
+    let retval = map.get(['NORTH', 'NORTH', 'EAST']);
+    expect(retval).to.deep.equal(new Point({type: 'END'}));
     done();
   });
 });
