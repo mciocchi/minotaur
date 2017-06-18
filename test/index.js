@@ -29,7 +29,7 @@ describe('Plane', function () {
 
   it('should initialize with correct data', function (done) {
     plane = new Plane([10, 10]);
-    assert(plane, 'plane should be initialized');
+    assert(plane, `plane should be initialized but is ${plane}`);
     done();
   });
 
@@ -42,8 +42,8 @@ describe('Plane', function () {
       error = e;
     }
 
-    assert(!plane2, 'plane should not be initialized.');
-    assert(error, 'plane should throw an error.');
+    assert(!plane2, 'plane should not be initialized!');
+    assert(error, 'plane should throw an error!');
     done();
   });
 
@@ -56,20 +56,22 @@ describe('Plane', function () {
       error = e;
     }
 
-    assert(!plane3, 'plane should not be initialized.');
-    assert(error, 'plane should throw an error.');
+    assert(!plane3, 'plane should not be initialized!');
+    assert(error, 'plane should throw an error!');
     done();
   });
 
   it('should know when coordinates are in bounds', function (done) {
     let retval = plane.inBounds([10, 10]);
-    assert(retval, '[10, 10] is inBounds');
+    assert(retval,
+      `inBounds should return true for [10, 10] but returned ${retval}`);
     done();
   });
 
   it('should know when coordinates are out of bounds', function (done) {
     let retval = plane.inBounds([11, 10]);
-    assert(!retval, '[11, 10] is not inBounds');
+    assert(!retval,
+      `inBounds should return false for [11, 10] but returned ${retval}`);
     done();
   });
 
@@ -110,43 +112,82 @@ describe('Cursor', function () {
 });
 
 describe('Map', function () {
-  let map = null;
-
   it('should initialize correctly', function (done) {
-    map = new Map([10, 10]);
+    let map = new Map([10, 10]);
     assert(map, 'map should be initialized.');
     done();
   });
 
+  it('points should initialize correctly', function (done) {
+    let point2 = new Point({type: 'START'});
+    expect(point2).to.deep.equal({type: 'START'});
+    done();
+  });
+
   it('should be able to set points by coordinate', function (done) {
+    let map = new Map([10, 10]);
     map.set([0, 1], new Point({type: 'START'}));
     done();
   });
 
   let point = null;
   it('should be able to set points by path', function (done) {
+    let map = new Map([10, 10]);
     point = new Point({type: 'TUNNEL'});
-    map.set(['NORTH', 'NORTH'], point);
-    map.set(['NORTH', 'NORTH', 'EAST'], new Point({type: 'END'}));
+    map.set([0, 1], ['NORTH', 'NORTH'], point);
     done();
   });
 
   it('should be queriable by coordinate', function (done) {
-    let retval = map.get([0, 2]);
-    assert(retval === point, 'map.get should return the correct point.');
-    done();
-  });
+    let map = new Map([10, 10]);
+    let point = new Point({type: 'TUNNEL'});
 
-  it('should be queriable by coordinate', function (done) {
+    map.set([0, 2], point);
     let retval = map.get([0, 2]);
-    assert(retval instanceof Point, 'map.get should return points that were set.');
-    assert(retval.type = 'TUNNEL', 'map.get should return the correct point.');
+    expect(retval).to.deep.equal(point);
     done();
   });
 
   it('should be queriable by path', function (done) {
-    let retval = map.get(['NORTH', 'NORTH', 'EAST']);
-    expect(retval).to.deep.equal(new Point({type: 'END'}));
+    let map = new Map([10, 10]);
+    let point = new Point({type: 'END'});
+
+    map.set([0, 2], ['NORTH', 'NORTH', 'EAST'], point);
+    let retval = map.get([0, 2], ['NORTH', 'NORTH', 'EAST']);
+    expect(retval).to.deep.equal(point);
+    done();
+  });
+
+  it('path and point navigation should match', function (done) {
+    let map = new Map([10, 10]);
+    let point = new Point({type: 'START'});
+    let position = map.set([5, 5], ['SOUTH', 'WEST', 'SOUTH', 'WEST'], point);
+    let retval1 = map.get(position);
+    let retval2 = map.get([5, 5], ['SOUTH', 'WEST', 'SOUTH', 'WEST']);
+    expect(retval1).to.deep.equal(point);
+    expect(retval2).to.deep.equal(point);
+    done();
+  });
+
+  it('map.set by path should return coordinates', function (done) {
+    let map = new Map([10, 10]);
+    let point = new Point({type: 'TUNNEL'});
+    let position = map.set([5, 5], ['SOUTH', 'WEST', 'SOUTH', 'WEST'], point);
+
+    assert(((typeof position[Symbol.iterator] === 'function') &&
+      (typeof position[0] === 'number')),
+      `map.set by path should return a Cursor but returned ${position}`);
+    done();
+  });
+
+  it('map.set by coordinates should always return coordinates', function (done) {
+    let map = new Map([10, 10]);
+    let point = new Point({type: 'TUNNEL'});
+    let position = map.set([7, 7], point);
+
+    assert(((typeof position[Symbol.iterator] === 'function') &&
+      (typeof position[0] === 'number')),
+      `map.set by path should return a Cursor but returned ${position}`);
     done();
   });
 });
