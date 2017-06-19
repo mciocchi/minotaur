@@ -23,6 +23,7 @@ const Plane = require('../lib/plane');
 const Cursor = require('../lib/cursor');
 const Map = require('../lib/map');
 const Point = require('../lib/point');
+const SparseMazeMap = require('../lib/sparsemazemap');
 
 describe('Plane', function () {
   let plane = null;
@@ -164,6 +165,7 @@ describe('Map', function () {
     let position = map.set([5, 5], ['SOUTH', 'WEST', 'SOUTH', 'WEST'], point);
     let retval1 = map.get(position);
     let retval2 = map.get([5, 5], ['SOUTH', 'WEST', 'SOUTH', 'WEST']);
+
     expect(retval1).to.deep.equal(point);
     expect(retval2).to.deep.equal(point);
     done();
@@ -190,4 +192,14 @@ describe('Map', function () {
       `map.set by path should return a Cursor but returned ${position}`);
     done();
   });
+});
+
+describe('SparseMazeMap', function () {
+  it('Should use undefined to signify maze wall to reduce memory footprint',
+    function (done) {
+      let sparseMazeMap = new SparseMazeMap([10, 10]);
+      let retval = sparseMazeMap.get([5, 5]);
+      expect(retval).to.deep.equal(new Point({type: 'WALL'}));
+      done();
+    });
 });
